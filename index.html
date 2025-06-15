@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jessica's Dynamic Horoscope</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Quicksand', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(102, 126, 234, 0.9);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            transition: opacity 0.5s ease;
+        }
+        
+        .loading-overlay.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+        
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-top: 3px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        .loading-text {
+            color: white;
+            margin-top: 20px;
+            font-size: 1.2em;
+            text-align: center;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .nav-menu {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 100;
+        }
+        
+        .menu-toggle {
+            background: rgba(183, 148, 246, 0.9);
+            border: none;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            font-size: 1.5em;
+            cursor: pointer;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            color: white;
+        }
+        
+        .menu-toggle:hover {
+            transform: scale(1.1);
+            box-shadow: 0 15px 30px rgba(183, 148, 246, 0.4);
+        }
+        
+        .menu-dropdown {
+            position: absolute;
+            top: 70px;
+            left: 0;
+            background: rgba(75, 57, 120, 0.95);
+            backdrop-filter: blur(15px);
+            border-radius: 20px;
+            padding: 20px;
+            min-width: 280px;
+            max-height: 70vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            transform: translateY(-20px);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .menu-dropdown.show {
+            transform: translateY(0);
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .menu-section {
+            margin-bottom: 15px;
+        }
+        
+        .menu-section h3 {
+            font-size: 0.9em;
+            color: #e8e1f5;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+        
+        .menu-item {
+            display: block;
+            padding: 8px 12px;
+            margin: 2px 0;
+            background: none;
+            border: none;
+            border-radius: 10px;
+            text-align: left;
+            font-family: 'Quicksand', sans-serif;
+            font-size: 0.9em;
+            color: #d4c7e8;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            width: 100%;
+        }
+        
+        .menu-item:hover {
+            background: rgba(95, 78, 138, 0.8);
+            color: #f0ebf7;
+            transform: translateX(5px);
+        }
+        
+        .menu-item.active {
+            background: rgba(120, 102, 168, 0.9);
+            color: #ffffff;
+        }
+        
+        .forecast-container {
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 25px;
+            padding: 40px 35px;
+            max-width: 600px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+            position: relative;
+            z-index: 10;
+            animation: fadeInUp 1s ease-out;
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .title {
+            font-size: 2.2em;
+            font-weight: 600;
+            color: #2d3436;
+            margin-bottom: 25px;
+            position: relative;
+        }
+        
+        .title::before,
+        .title::after {
+            content: "✨";
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            animation: sparkle 2s ease-in-out infinite alternate;
+        }
+        
+        .title::before {
+            left: -35px;
+        }
+        
+        .title::after {
+            right: -35px;
+            animation-delay: 1s;
+        }
+        
+        @keyframes sparkle {
+            0% { opacity: 0.4; transform: translateY(-50%) scale(0.8); }
+            100% { opacity: 1; transform: translateY(-50%) scale(1.2); }
+        }
+        
+        .message {
+            font-size: 1.2em;
+            line-height: 1.7;
+            color: #2d3436;
+            font-weight: 400;
+            padding: 25px;
+            background: linear-gradient(135deg, #b794f6, #9f7aea);
+            border-radius: 20px;
+            margin: 25px 0;
+            animation: messageGlow 1.5s ease-in-out 0.5s both;
+            position: relative;
+            overflow: hidden;
+            color: white;
+        }
+        
+        @keyframes messageGlow {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+        
+        .date {
+            font-size: 1em;
+            color: #74b9ff;
+            font-weight: 500;
+            margin-top: 20px;
+        }
+        
+        .reading-section {
+            display: none;
+        }
+        
+        .reading-section.active {
+            display: block;
+            animation: fadeInUp 0.5s ease-out;
+        }
+        
+        .refresh-btn {
+            background: linear-gradient(135deg, #00b894, #00a085);
+            border: none;
+            border-radius: 25px;
+            padding: 12px 30px;
+            color: white;
+            font-family: 'Quicksand', sans-serif;
+            font-weight: 600;
+            font-size: 1em;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+        }
+        
+        .refresh-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0, 184, 148, 0.3);
+        }
+        
+        .refresh-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .error-message {
+            background: rgba(255, 99, 132, 0.1);
+            border: 1px solid rgba(255, 99, 132, 0.3);
+            border-radius: 15px;
+            padding: 15px;
+            color: #e74c3c;
+            margin: 20px 0;
+            font-size: 0.9em;
+        }
+        
+        .floating-element {
+            position: absolute;
+            font-size: 2em;
+            animation: float 4s ease-in-out infinite;
+            z-index: 5;
+        }
+        
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0px) rotate(0deg);
+                opacity: 0.8;
+            }
+            50% {
+                transform: translateY(-30px) rotate(15deg);
+                opacity: 1;
+            }
+        }
+        
+        .floating-element:nth-child(1) { top: 8%; left: 8%; animation-delay: 0s; }
+        .floating-element:nth-child(2) { top: 15%; right: 12%; animation-delay: 0.8s; }
+        .floating-element:nth-child(3) { top: 55%; left: 3%; animation-delay: 1.6s; }
+        .floating-element:nth-child(4) { top: 65%; right: 8%; animation-delay: 2.4s; }
+        .floating-element:nth-child(5) { top: 35%; left: 12%; animation-delay: 3.2s; }
+        
+        @media (max-width: 768px) {
+            .forecast-container {
+                max-width: 90%;
+                padding: 30px 25px;
+            }
+            
+            .title {
+                font-size: 1.8em;
+            }
+            
+            .message {
+                font-size: 1.1em;
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="loading-overlay" class="loading-overlay">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">
+            <div>Consulting the cosmos for Jessica...</div>
+            <div style="margin-top: 10px; font-size: 0.9em;">Calculating planetary positions & generating fresh insights</div>
+        </div>
+    </div>
+    
+    <div class="floating-element">🌙</div>
+    <div class="floating-element">⭐</div>
+    <div class="floating-element">🌸</div>
+    <div class="floating-element">🦋</div>
+    <div class="floating-element">✨</div>
+    
+    <div class="nav-menu">
+        <button class="menu-toggle" onclick="toggleMenu()">🔮</button>
+        <div id="menu-dropdown" class="menu-dropdown">
+            <div class="menu-section">
+                <h3>Jessica's Readings</h3>
+                <button class="menu-item active" onclick="showSection('daily')">AI Daily Horoscope</button>
+                <button class="menu-item" onclick="showSection('weekly')">Weekly Forecast</button>
+                <button class="menu-item" onclick="showSection('monthly')">Monthly Overview</button>
+            </div>
+            
+            <div class="menu-section">
+                <h3>Specialized</h3>
+                <button class="menu-item" onclick="showSection('love')">Love & Relationships</button>
+                <button class="menu-item" onclick="showSection('career')">Career & Purpose</button>
+                <button class="menu-item" onclick="showSection('wellness')">Wellness Guide</button>
+                <button class="menu-item" onclick="showSection('friendship')">Friendship & Social</button>
+                <button class="menu-item" onclick="showSection('adventure')">Adventure & Travel</button>
+                <button class="menu-item" onclick="showSection('money')">Money & Abundance</button>
+            </div>
+            
+            <div class="menu-section">
+                <h3>Interactive</h3>
+                <button class="menu-item" onclick="showSection('question')">Question of the Day</button>
+                <button class="menu-item" onclick="showSection('oracle')">Tarot-Style Oracle</button>
+                <button class="menu-item" onclick="showSection('compatibility')">Compatibility Reading</button>
+                <button class="menu-item" onclick="showSection('manifestation')">Manifestation Messages</button>
+            </div>
+            
+            <div class="menu-section">
+                <h3>Quick Guidance</h3>
+                <button class="menu-item" onclick="showSection('cosmic-weather')">Cosmic Weather Report</button>
+                <button class="menu-item" onclick="showSection('affirmations')">Daily Affirmations</button>
+                <button class="menu-item" onclick="showSection('lucky')">Lucky Numbers & Times</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="forecast-container">
+        <div id="daily-section" class="reading-section active">
+            <h1 class="title">Jessica's AI Horoscope Today</h1>
+            <div id="daily-message" class="message">
+                Generating your personalized horoscope...
+            </div>
+            <div id="current-date" class="date"></div>
+            <button id="refresh-daily" class="refresh-btn" onclick="generateDailyHoroscope()">
+                ✨ Generate Fresh Reading
+            </button>
+        </div>
+        
+        <div id="weekly-section" class="reading-section">
+            <h1 class="title">Jessica's Weekly Forecast</h1>
+            <div id="weekly-message" class="message">Loading weekly insights...</div>
+            <div id="week-dates" class="date"></div>
+        </div>
+        
+        <div id="monthly-section" class="reading-section">
+            <h1 class="title">Jessica's Monthly Overview</h1>
+            <div id="monthly-message" class="message">Loading monthly guidance...</div>
+            <div id="month-year" class="date"></div>
+        </div>
+        
+        <div id="love-section" class="reading-section">
+            <h1 class="title">Love & Relationships</h1>
+            <div id="love-message" class="message">Loading relationship insights...</div>
+            <div class="date">Heart-centered guidance</div>
+        </div>
+        
+        <div id="career-section" class="reading-section">
+            <h1 class="title">Career & Purpose</h1>
+            <div id="career-message" class="message">Loading career insights...</div>
+            <div class="date">Professional guidance</div>
+        </div>
+        
+        <div id="wellness-section" class="reading-section">
+            <h1 class="title">Wellness Guide</h1>
+            <div id="wellness-message" class="message">Loading wellness insights...</div>
+            <div class="date">Self-care guidance</div>
+        </div>
+        
+        <div id="friendship-section" class="reading-section">
+            <h1 class="title">Friendship & Social</h1>
+            <div id="friendship-message" class="message">Loading friendship insights...</div>
+            <div class="date">Social energy guidance</div>
+        </div>
+        
+        <div id="adventure-section" class="reading-section">
+            <h1 class="title">Adventure & Travel</h1>
+            <div id="adventure-message" class="message">Loading adventure insights...</div>
+            <div class="date">Exploration guidance</div>
+        </div>
+        
+        <div id="money-section" class="reading-section">
+            <h1 class="title">Money & Abundance</h1>
+            <div id="money-message" class="message">Loading abundance insights...</div>
+            <div class="date">Financial guidance</div>
+        </div>
+        
+        <div id="question-section" class="reading-section">
+            <h1 class="title">Question of the Day</h1>
+            <div id="question-message" class="message">Loading daily question...</div>
+            <div class="date">Daily reflection</div>
+        </div>
+        
+        <div id="oracle-section" class="reading-section">
+            <h1 class="title">Tarot-Style Oracle</h1>
+            <div id="oracle-message" class="message">Loading oracle guidance...</div>
+            <div class="date">Mystical insights</div>
+        </div>
+        
+        <div id="compatibility-section" class="reading-section">
+            <h1 class="title">Compatibility Reading</h1>
+            <div id="compatibility-message" class="message">Loading compatibility insights...</div>
+            <div class="date">Relationship harmony</div>
+        </div>
+        
+        <div id="manifestation-section" class="reading-section">
+            <h1 class="title">Manifestation Messages</h1>
+            <div id="manifestation-message" class="message">Loading manifestation guidance...</div>
+            <div class="date">Creative power</div>
+        </div>
+        
+        <div id="cosmic-weather-section" class="reading-section">
+            <h1 class="title">Cosmic Weather Report</h1>
+            <div id="cosmic-weather-message" class="message">Loading cosmic conditions...</div>
+            <div class="date">Universal energies</div>
+        </div>
+        
+        <div id="affirmations-section" class="reading-section">
+            <h1 class="title">Daily Affirmations</h1>
+            <div id="affirmations-message" class="message">Loading empowering affirmations...</div>
+            <div class="date">Personal power</div>
+        </div>
+        
+        <div id="lucky-section" class="reading-section">
+            <h1 class="title">Lucky Numbers & Times</h1>
+            <div id="lucky-message" class="message">Loading fortune guidance...</div>
+            <div class="date">Cosmic timing</div>
+        </div>
+    </div>
+
+    <script>
+        var jessicaProfile = {
+            name: "Jessica",
+            sun: "Gemini-Cancer cusp",
+            moon: "Taurus",
+            rising: "Sagittarius",
+            birthDate: "June 20",
+            element: "Mutable Air/Cardinal Water blend",
+            personality: "curious, nurturing, adaptable, optimistic"
+        };
+        
+        var currentSection = 'daily';
+        
+        function generateAIHoroscope(type, personalData) {
+            var templates = {
+                daily: [
+                    "Beautiful soul Jessica, with your " + personalData.sun + " energy and " + personalData.moon + " Moon, today's cosmic alignment brings special magic to your dual nature. Your Gemini curiosity meets Cancer intuition in perfect harmony today - trust both your analytical mind and your emotional wisdom. Your " + personalData.rising + " rising ensures you radiate optimism and attract meaningful opportunities. Your natural adaptability is your superpower right now.",
+                    
+                    "Cosmic greetings, Jessica! Your unique position on the summer solstice cusp makes you especially sensitive to today's planetary dance. Your gift for bridging different worlds shines brightly today. Your " + personalData.moon + " Moon grounds your mutable energy in sensual wisdom, while your " + personalData.rising + " rising broadcasts hope and adventure. The universe whispers that this is a day for meaningful connections and creative breakthroughs. Trust your beautiful complexity!",
+                    
+                    "Dear Jessica, born where air meets water, mind meets heart, your cusp nature is perfectly activated by today's cosmic weather. Current planetary energies encourage your Cancer side to trust intuition, while stimulating your Gemini love of learning. Your " + personalData.moon + " Moon reminds you that the most profound insights come through all your senses. Your natural wisdom helps others navigate their own complexities. Your " + personalData.rising + " rising ensures adventures find you!"
+                ],
+                
+                weekly: [
+                    "This week celebrates your cusp magic, Jessica! The cosmic energies perfectly support your " + personalData.sun + " blend of curiosity and intuition. Expect breakthrough moments where your analytical Gemini mind and nurturing Cancer heart work in perfect partnership. Your " + personalData.moon + " Moon ensures any changes feel grounding rather than overwhelming. Mid-week brings special opportunities for your " + personalData.rising + " rising to shine - say yes to adventures that combine learning with heart-centered connection. The stars whisper that this is your week to bridge different worlds with grace."
+                ],
+                
+                monthly: [
+                    "This month brings profound activation of your summer solstice birthday magic, Jessica. Your position between Gemini season and Cancer season gives you access to both intellectual brilliance and emotional mastery. The monthly lunar cycles will especially support your " + personalData.moon + " Moon's need for beauty and stability, while planetary transits energize your " + personalData.rising + " rising's love of growth and exploration. The cosmic forecast shows this is a powerful time for projects that combine your gifts - teaching, writing, counseling, or any work that requires both sharp thinking and deep empathy."
+                ],
+                
+                love: [
+                    "Your cusp nature makes you irresistibly attractive in love, Jessica! You bring both Gemini's sparkling wit and Cancer's emotional depth to relationships. Your " + personalData.moon + " Moon ensures you create nurturing, sensual connections that satisfy both body and soul. Your " + personalData.rising + " rising radiates the confidence and optimism that draws authentic partners who appreciate your beautiful complexity. Whether single or partnered, your unique nature is your greatest romantic asset. This is a beautiful time for heart-opening conversations and meaningful connections."
+                ],
+                
+                career: [
+                    "Your " + personalData.sun + " nature makes you a natural bridge-builder in professional settings, Jessica! You excel in careers that require both analytical thinking and emotional intelligence. Your " + personalData.moon + " Moon provides the persistence and practical wisdom to build lasting success, while your " + personalData.rising + " rising adds vision and enthusiasm that inspires others. Consider roles in counseling, writing, teaching, marketing, or any field where you can combine strategy with heart. Your ability to understand different perspectives makes you invaluable in team settings."
+                ],
+                
+                wellness: [
+                    "Your unique nature requires self-care that honors both your mind and emotions, Jessica. Your " + personalData.moon + " Moon craves sensual pleasures - warm baths, soft textures, delicious foods, and beautiful surroundings. Your " + personalData.sun + " blend needs both mental stimulation and emotional nurturing. Try journaling by candlelight, nature walks that engage all your senses, or yoga that combines movement with meditation. Your " + personalData.rising + " rising reminds you that adventure can be healing too! Focus on activities that feed both your curious mind and your nurturing heart."
+                ],
+                
+                friendship: [
+                    "Your birthday makes you the perfect friend for all seasons, Jessica! Your Gemini side loves witty conversations and trying new experiences, while your Cancer influence creates deep, nurturing bonds. Your " + personalData.moon + " Moon ensures you're the friend who remembers birthdays and creates cozy gathering spaces. Your " + personalData.rising + " rising attracts diverse, inspiring people into your circle. You're naturally gifted at being both the fun friend and the wise counselor. Focus on quality connections that appreciate all sides of your multifaceted personality."
+                ],
+                
+                adventure: [
+                    "Your " + personalData.rising + " rising calls for adventure, but your nature knows it comes in many beautiful forms! Your Gemini curiosity seeks new information and experiences, while your Cancer side wants emotionally meaningful journeys. Your " + personalData.moon + " Moon prefers comfortable, sensual travel - think cozy bed and breakfasts, scenic routes, and destinations with amazing food. Whether it's exploring a new neighborhood, taking a cooking class, visiting a museum, or planning an actual trip, let your adventures feed both your mind and soul."
+                ],
+                
+                money: [
+                    "Your " + personalData.moon + " Moon gives you natural financial wisdom and an appreciation for quality over quantity, Jessica. Your unique energy helps you balance practical money decisions with intuitive feelings about investments. Your " + personalData.rising + " rising attracts abundance through optimism and generous sharing of your gifts. Focus on building wealth that supports both security and freedom. Trust your nature to find creative income streams that combine multiple talents."
+                ],
+                
+                question: [
+                    "Today's cosmic question for your soul: How can I honor both my need for mental stimulation and emotional depth today? Your " + personalData.sun + " nature thrives when you can satisfy both your curious mind and your nurturing heart. Your " + personalData.moon + " Moon suggests the answer might involve something beautiful or sensual, while your " + personalData.rising + " rising adds: And how can this bring more joy and wisdom into my world? Reflect on activities, conversations, or experiences that feed multiple parts of your complex, beautiful self."
+                ],
+                
+                oracle: [
+                    "Your Oracle Card: THE BRIDGE - Perfect for your energy! You are being called to connect different worlds, ideas, or people today. Your gift lies in translation - helping others understand complex emotions, bridging gaps between logic and intuition, or bringing together diverse perspectives. Your " + personalData.moon + " Moon provides the stable foundation, while your " + personalData.rising + " rising offers the vision to see where this bridge leads. Trust your natural ability to help others cross from confusion to clarity, from isolation to connection. You are the bridge the world needs."
+                ],
+                
+                compatibility: [
+                    "Your nature makes you compatible with many different personality types, Jessica! You connect well with Air signs who match your intellectual curiosity, Water signs who appreciate your emotional depth, Earth signs who ground your mutable energy, and Fire signs who match your " + personalData.rising + " rising optimism. Your " + personalData.moon + " Moon needs someone who appreciates beauty and sensuality. Most importantly, you need someone who celebrates your beautiful complexity rather than trying to simplify you!"
+                ],
+                
+                manifestation: [
+                    "Your power combines Gemini's power of words with Cancer's emotional manifestation abilities, Jessica! Today's manifestation focus: Use your gift of communication to speak your dreams into reality. Your " + personalData.moon + " Moon helps you manifest through consistent, sensual practices - write in a beautiful journal, create vision boards with tactile elements, or speak affirmations while surrounded by things you love. Your " + personalData.rising + " rising amplifies your manifestations through optimism and gratitude. Try this: I attract experiences that honor both my brilliant mind and my loving heart."
+                ],
+                
+                cosmicWeather: [
+                    "Today's Cosmic Weather for Jessica's Chart: The planetary energies enhance your communication powers, making you exceptionally articulate about complex emotions. Current cosmic influences support your " + personalData.moon + " Moon's love of beauty and comfort - perfect day for aesthetic pleasures! The universe expands your " + personalData.rising + " rising optimism and attracts lucky opportunities. Weather outlook: Brilliant conversations with a chance of meaningful connections, scattered moments of creative inspiration, and a high probability of feeling beautifully, authentically yourself!"
+                ],
+                
+                affirmations: [
+                    "Today's affirmations for your beautiful soul: I embrace my nature as a gift, not a contradiction. My mind and heart work together in perfect harmony. I trust both my analytical thoughts and my intuitive feelings. My complexity makes me interesting, not complicated. I attract people who appreciate all sides of my personality. I am grounded in my " + personalData.moon + " Moon stability while free to explore with my " + personalData.rising + " rising spirit. Repeat these throughout your day and feel how they resonate with your unique cosmic blueprint!"
+                ],
+                
+                lucky: [
+                    "Your Lucky Elements Today: Numbers: 3 (Gemini energy), 6 (Venus-ruled harmony), 9 (Sagittarius expansion), 20 (your birth date power). Lucky Times: 11:11 AM (manifestation portal), 2:20 PM (" + personalData.moon + " Moon stability), 6:00 PM (Venus hour for beauty), 9:00 PM (" + personalData.rising + " inspiration). Lucky Colors: Soft yellow (Gemini curiosity), seafoam green (Cancer intuition), earthy brown (Taurus grounding), bright turquoise (Sagittarius adventure). Lucky Actions: Send a thoughtful message, enjoy something beautiful, trust your gut feeling, share your wisdom!"
+                ]
+            };
+            
+            var typeTemplates = templates[type] || templates.daily;
+            var randomTemplate = typeTemplates[Math.floor(Math.random() * typeTemplates.length)];
+            return randomTemplate;
+        }
+        
+        function generateDailyHoroscope() {
+            var button = document.getElementById('refresh-daily');
+            var messageEl = document.getElementById('daily-message');
+            
+            button.disabled = true;
+            button.textContent = 'Consulting the cosmos...';
+            messageEl.textContent = 'The universe is preparing your personalized reading...';
+            
+            setTimeout(function() {
+                try {
+                    var horoscope = generateAIHoroscope('daily', jessicaProfile);
+                    messageEl.textContent = horoscope;
+                    
+                    var today = new Date();
+                    document.getElementById('current-date').textContent = today.toLocaleDateString('en-US', {
+                        weekday: 'long',
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
+                    });
+                    
+                } catch (error) {
+                    messageEl.innerHTML = '<div class="error-message">Unable to generate reading right now. The cosmic energies are shifting - please try again in a moment!</div>';
+                } finally {
+                    button.disabled = false;
+                    button.textContent = 'Generate Fresh Reading';
+                }
+            }, 2000);
+        }
+        
+        function toggleMenu() {
+            var dropdown = document.getElementById('menu-dropdown');
+            dropdown.classList.toggle('show');
+        }
+        
+        function showSection(sectionName) {
+            var sections = document.querySelectorAll('.reading-section');
+            for (var i = 0; i < sections.length; i++) {
+                sections[i].classList.remove('active');
+            }
+            
+            var menuItems = document.querySelectorAll('.menu-item');
+            for (var i = 0; i < menuItems.length; i++) {
+                menuItems[i].classList.remove('active');
+            }
+            event.target.classList.add('active');
+            
+            currentSection = sectionName;
+            document.getElementById(sectionName + '-section').classList.add('active');
+            
+            loadSectionContent(sectionName);
+            
+            document.getElementById('menu-dropdown').classList.remove('show');
+        }
+        
+        function loadSectionContent(sectionName) {
+            var loadingText = "Consulting the cosmos for Jessica...";
+            
+            if (sectionName === 'weekly') {
+                document.getElementById('weekly-message').textContent = loadingText;
+                setTimeout(function() {
+                    var weeklyReading = generateAIHoroscope('weekly', jessicaProfile);
+                    document.getElementById('weekly-message').textContent = weeklyReading;
+                    
+                    var today = new Date();
+                    var monday = new Date(today);
+                    monday.setDate(today.getDate() - today.getDay() + 1);
+                    var sunday = new Date(monday);
+                    sunday.setDate(monday.getDate() + 6);
+                    
+                    document.getElementById('week-dates').textContent = 
+                        monday.toLocaleDateString('en-US', {month: 'short', day: 'numeric'}) + 
+                        ' - ' + 
+                        sunday.toLocaleDateString('en-US', {month: 'short', day: 'numeric', year: 'numeric'});
+                }, 1500);
+                
+            } else if (sectionName === 'monthly') {
+                document.getElementById('monthly-message').textContent = loadingText;
+                setTimeout(function() {
+                    var monthlyReading = generateAIHoroscope('monthly', jessicaProfile);
+                    document.getElementById('monthly-message').textContent = monthlyReading;
+                    
+                    document.getElementById('month-year').textContent = 
+                        new Date().toLocaleDateString('en-US', {month: 'long', year: 'numeric'});
+                }, 1500);
+                
+            } else if (sectionName === 'love') {
+                document.getElementById('love-message').textContent = loadingText;
+                setTimeout(function() {
+                    var loveReading = generateAIHoroscope('love', jessicaProfile);
+                    document.getElementById('love-message').textContent = loveReading;
+                }, 1400);
+                
+            } else if (sectionName === 'career') {
+                document.getElementById('career-message').textContent = loadingText;
+                setTimeout(function() {
+                    var careerReading = generateAIHoroscope('career', jessicaProfile);
+                    document.getElementById('career-message').textContent = careerReading;
+                }, 1400);
+                
+            } else if (sectionName === 'wellness') {
+                document.getElementById('wellness-message').textContent = loadingText;
+                setTimeout(function() {
+                    var wellnessReading = generateAIHoroscope('wellness', jessicaProfile);
+                    document.getElementById('wellness-message').textContent = wellnessReading;
+                }, 1400);
+                
+            } else if (sectionName === 'friendship') {
+                document.getElementById('friendship-message').textContent = loadingText;
+                setTimeout(function() {
+                    var friendshipReading = generateAIHoroscope('friendship', jessicaProfile);
+                    document.getElementById('friendship-message').textContent = friendshipReading;
+                }, 1400);
+                
+            } else if (sectionName === 'adventure') {
+                document.getElementById('adventure-message').textContent = loadingText;
+                setTimeout(function() {
+                    var adventureReading = generateAIHoroscope('adventure', jessicaProfile);
+                    document.getElementById('adventure-message').textContent = adventureReading;
+                }, 1400);
+                
+            } else if (sectionName === 'money') {
+                document.getElementById('money-message').textContent = loadingText;
+                setTimeout(function() {
+                    var moneyReading = generateAIHoroscope('money', jessicaProfile);
+                    document.getElementById('money-message').textContent = moneyReading;
+                }, 1400);
+                
+            } else if (sectionName === 'question') {
+                document.getElementById('question-message').textContent = loadingText;
+                setTimeout(function() {
+                    var questionReading = generateAIHoroscope('question', jessicaProfile);
+                    document.getElementById('question-message').textContent = questionReading;
+                }, 1400);
+                
+            } else if (sectionName === 'oracle') {
+                document.getElementById('oracle-message').textContent = loadingText;
+                setTimeout(function() {
+                    var oracleReading = generateAIHoroscope('oracle', jessicaProfile);
+                    document.getElementById('oracle-message').textContent = oracleReading;
+                }, 1400);
+                
+            } else if (sectionName === 'compatibility') {
+                document.getElementById('compatibility-message').textContent = loadingText;
+                setTimeout(function() {
+                    var compatibilityReading = generateAIHoroscope('compatibility', jessicaProfile);
+                    document.getElementById('compatibility-message').textContent = compatibilityReading;
+                }, 1400);
+                
+            } else if (sectionName === 'manifestation') {
+                document.getElementById('manifestation-message').textContent = loadingText;
+                setTimeout(function() {
+                    var manifestationReading = generateAIHoroscope('manifestation', jessicaProfile);
+                    document.getElementById('manifestation-message').textContent = manifestationReading;
+                }, 1400);
+                
+            } else if (sectionName === 'cosmic-weather') {
+                document.getElementById('cosmic-weather-message').textContent = loadingText;
+                setTimeout(function() {
+                    var cosmicWeatherReading = generateAIHoroscope('cosmicWeather', jessicaProfile);
+                    document.getElementById('cosmic-weather-message').textContent = cosmicWeatherReading;
+                }, 1400);
+                
+            } else if (sectionName === 'affirmations') {
+                document.getElementById('affirmations-message').textContent = loadingText;
+                setTimeout(function() {
+                    var affirmationsReading = generateAIHoroscope('affirmations', jessicaProfile);
+                    document.getElementById('affirmations-message').textContent = affirmationsReading;
+                }, 1400);
+                
+            } else if (sectionName === 'lucky') {
+                document.getElementById('lucky-message').textContent = loadingText;
+                setTimeout(function() {
+                    var luckyReading = generateAIHoroscope('lucky', jessicaProfile);
+                    document.getElementById('lucky-message').textContent = luckyReading;
+                }, 1400);
+            }
+        }
+        
+        function initializeApp() {
+            generateDailyHoroscope();
+            setTimeout(function() {
+                document.getElementById('loading-overlay').classList.add('hidden');
+            }, 3000);
+        }
+        
+        window.addEventListener('load', initializeApp);
+    </script>
+</body>
+</html>
