@@ -256,7 +256,7 @@
         }
         
         .refresh-btn {
-            background: linear-gradient(135deg, #00b894, #00a085);
+            background: linear-gradient(135deg, #ffd700, #ffb347, #ff8c00);
             border: none;
             border-radius: 25px;
             padding: 12px 30px;
@@ -267,17 +267,54 @@
             cursor: pointer;
             margin-top: 20px;
             transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .refresh-btn::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transform: rotate(45deg);
+            transition: all 0.6s ease;
+            opacity: 0;
+        }
+        
+        .refresh-btn:hover::before {
+            animation: shine 0.6s ease-in-out;
+        }
+        
+        @keyframes shine {
+            0% {
+                left: -50%;
+                opacity: 0;
+            }
+            50% {
+                left: 50%;
+                opacity: 1;
+            }
+            100% {
+                left: 150%;
+                opacity: 0;
+            }
         }
         
         .refresh-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(0, 184, 148, 0.3);
+            box-shadow: 0 8px 25px rgba(255, 215, 0, 0.4);
+            background: linear-gradient(135deg, #ffed4e, #ffc947, #ff9500);
         }
         
         .refresh-btn:disabled {
             opacity: 0.6;
             cursor: not-allowed;
             transform: none;
+            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.2);
         }
         
         .error-message {
@@ -314,6 +351,279 @@
         .floating-element:nth-child(4) { top: 65%; right: 8%; animation-delay: 2.4s; }
         .floating-element:nth-child(5) { top: 35%; left: 12%; animation-delay: 3.2s; }
         
+        /* Girly Corner Styles */
+        .girly-content {
+            text-align: left;
+        }
+        
+        .upload-instructions {
+            margin-bottom: 30px;
+        }
+        
+        .instruction-card {
+            background: linear-gradient(135deg, #fce4ec, #f8bbd9);
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            color: #4a4a4a;
+        }
+        
+        .instruction-card h3 {
+            text-align: center;
+            margin-bottom: 15px;
+            color: #6a1b9a;
+            font-size: 1.3em;
+        }
+        
+        .instruction-card p {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 1.1em;
+        }
+        
+        .instruction-steps {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .step {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+        }
+        
+        .step-number {
+            background: #6a1b9a;
+            color: white;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.9em;
+        }
+        
+        .step-text {
+            font-weight: 500;
+        }
+        
+        .media-gallery {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+        
+        .gallery-section {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 20px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .gallery-title {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #6a1b9a;
+            font-size: 1.2em;
+            font-weight: 600;
+        }
+        
+        .photo-grid, .video-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        
+        .media-placeholder {
+            aspect-ratio: 1;
+            border: 2px dashed #d1c4e9;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+            transition: all 0.3s ease;
+        }
+        
+        .video-placeholder {
+            aspect-ratio: 16/9;
+        }
+        
+        .media-placeholder:hover {
+            border-color: #9c27b0;
+            transform: scale(1.02);
+        }
+        
+        .placeholder-content {
+            text-align: center;
+            color: #666;
+        }
+        
+        .placeholder-icon {
+            display: block;
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+        
+        .placeholder-text {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .placeholder-subtext {
+            display: block;
+            font-size: 0.8em;
+            opacity: 0.7;
+            font-family: monospace;
+        }
+        
+        /* Actual media styles for when photos/videos are added */
+        .gallery-photo {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .gallery-photo:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+        }
+        
+        .gallery-video {
+            width: 100%;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .gallery-video:hover {
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+        }
+        
+        .self-care-section {
+            margin-top: 30px;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.8s ease;
+        }
+        
+        .self-care-section.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .self-care-title {
+            font-size: 1.4em;
+            font-weight: 600;
+            color: #2d3436;
+            margin-bottom: 20px;
+            text-align: center;
+            position: relative;
+        }
+        
+        .self-care-title::before,
+        .self-care-title::after {
+            content: "🌸";
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            animation: gentleFloat 3s ease-in-out infinite alternate;
+        }
+        
+        .self-care-title::before {
+            left: -30px;
+        }
+        
+        .self-care-title::after {
+            right: -30px;
+            animation-delay: 1.5s;
+        }
+        
+        @keyframes gentleFloat {
+            0% { opacity: 0.6; transform: translateY(-50%) scale(0.9); }
+            100% { opacity: 1; transform: translateY(-50%) scale(1.1); }
+        }
+        
+        .self-care-cards {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .self-care-card {
+            background: linear-gradient(135deg, #f8d7da, #f1c0c7);
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.08);
+            color: #5a4b5c;
+            font-size: 1em;
+            line-height: 1.5;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            animation: cardSlideIn 0.6s ease-out forwards;
+        }
+        
+        .self-care-card:nth-child(1) {
+            animation-delay: 0.2s;
+            background: linear-gradient(135deg, #f8d7da, #f1c0c7);
+        }
+        
+        .self-care-card:nth-child(2) {
+            animation-delay: 0.4s;
+            background: linear-gradient(135deg, #f5d2d3, #eab3b8);
+        }
+        
+        .self-care-card:nth-child(3) {
+            animation-delay: 0.6s;
+            background: linear-gradient(135deg, #f2cedf, #e8a6c2);
+        }
+        
+        .self-care-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12);
+        }
+        
+        .self-care-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.08) 0%, transparent 70%);
+            transform: rotate(45deg);
+            transition: all 0.3s ease;
+        }
+        
+        .self-care-card:hover::before {
+            top: -60%;
+            left: -60%;
+        }
+        
+        @keyframes cardSlideIn {
+            0% {
+                opacity: 0;
+                transform: translateX(-30px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
         @media (max-width: 768px) {
             .forecast-container {
                 max-width: 90%;
@@ -327,6 +637,16 @@
             .message {
                 font-size: 1.1em;
                 padding: 20px;
+            }
+            
+            .self-care-card {
+                padding: 15px;
+                font-size: 0.9em;
+            }
+            
+            .self-care-title::before,
+            .self-care-title::after {
+                display: none;
             }
         }
     </style>
@@ -351,7 +671,7 @@
         <div id="menu-dropdown" class="menu-dropdown">
             <div class="menu-section">
                 <h3>Jessica's Readings</h3>
-                <button class="menu-item active" onclick="showSection('daily')">AI Daily Horoscope</button>
+                <button class="menu-item active" onclick="showSection('daily')">Daily Horoscope</button>
                 <button class="menu-item" onclick="showSection('weekly')">Weekly Forecast</button>
                 <button class="menu-item" onclick="showSection('monthly')">Monthly Overview</button>
             </div>
@@ -364,6 +684,11 @@
                 <button class="menu-item" onclick="showSection('friendship')">Friendship & Social</button>
                 <button class="menu-item" onclick="showSection('adventure')">Adventure & Travel</button>
                 <button class="menu-item" onclick="showSection('money')">Money & Abundance</button>
+            </div>
+            
+            <div class="menu-section">
+                <h3>Personal Space</h3>
+                <button class="menu-item" onclick="showSection('girly-corner')">💕 The Girly Corner</button>
             </div>
             
             <div class="menu-section">
@@ -385,11 +710,17 @@
     
     <div class="forecast-container">
         <div id="daily-section" class="reading-section active">
-            <h1 class="title">Jessica's AI Horoscope Today</h1>
+            <h1 class="title">Jessica's Daily Horoscope</h1>
             <div id="daily-message" class="message">
                 Generating your personalized horoscope...
             </div>
             <div id="current-date" class="date"></div>
+            <div id="self-care-section" class="self-care-section">
+                <h3 class="self-care-title">Cosmic Self-Care Suggestions</h3>
+                <div id="self-care-cards" class="self-care-cards">
+                    <!-- Self-care cards will be generated here -->
+                </div>
+            </div>
             <button id="refresh-daily" class="refresh-btn" onclick="generateDailyHoroscope()">
                 ✨ Generate Fresh Reading
             </button>
@@ -484,6 +815,96 @@
             <div id="lucky-message" class="message">Loading fortune guidance...</div>
             <div class="date">Cosmic timing</div>
         </div>
+        
+        <div id="girly-corner-section" class="reading-section">
+            <h1 class="title">💕 The Girly Corner</h1>
+            <div class="girly-content">
+                <div class="upload-instructions">
+                    <div class="instruction-card">
+                        <h3>✨ Welcome to Our Special Space! ✨</h3>
+                        <p>This is where all our favorite memories live! To add your photos and videos:</p>
+                        <div class="instruction-steps">
+                            <div class="step">
+                                <span class="step-number">1</span>
+                                <span class="step-text">Go to your GitHub repository</span>
+                            </div>
+                            <div class="step">
+                                <span class="step-number">2</span>
+                                <span class="step-text">Click "Add file" → "Upload files"</span>
+                            </div>
+                            <div class="step">
+                                <span class="step-number">3</span>
+                                <span class="step-text">Drag your photos/videos and commit changes</span>
+                            </div>
+                            <div class="step">
+                                <span class="step-number">4</span>
+                                <span class="step-text">Update the code below to display them!</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="media-gallery">
+                    <div class="gallery-section">
+                        <h3 class="gallery-title">📸 Our Photo Memories</h3>
+                        <div class="photo-grid">
+                            <!-- Replace these examples with your actual photos -->
+                            <!-- 
+                            Example format:
+                            <img src="photo1.jpg" alt="Description of photo" class="gallery-photo">
+                            <img src="photo2.jpg" alt="Another memory" class="gallery-photo">
+                            -->
+                            
+                            <!-- You can add your photos like this: -->
+                            <!-- <img src="yourphoto1.jpg" alt="Fun day together" class="gallery-photo"> -->
+                            <!-- <img src="yourphoto2.jpg" alt="Beach trip" class="gallery-photo"> -->
+                            <!-- <img src="yourphoto3.jpg" alt="Selfie time" class="gallery-photo"> -->
+                            
+                            <div class="media-placeholder photo-placeholder">
+                                <div class="placeholder-content">
+                                    <span class="placeholder-icon">📷</span>
+                                    <span class="placeholder-text">Add your first photo!</span>
+                                    <span class="placeholder-subtext">Upload to GitHub, then use: &lt;img src="filename.jpg" alt="description" class="gallery-photo"&gt;</span>
+                                </div>
+                            </div>
+                            <div class="media-placeholder photo-placeholder">
+                                <div class="placeholder-content">
+                                    <span class="placeholder-icon">🌸</span>
+                                    <span class="placeholder-text">More memories here</span>
+                                    <span class="placeholder-subtext">Just copy the img tag format above</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="gallery-section">
+                        <h3 class="gallery-title">🎥 Our Video Memories</h3>
+                        <div class="video-grid">
+                            <!-- Replace with your actual videos -->
+                            <!-- 
+                            Example format:
+                            <video controls class="gallery-video">
+                                <source src="video1.mp4" type="video/mp4">
+                                Your browser doesn't support video.
+                            </video>
+                            -->
+                            
+                            <!-- You can add your videos like this: -->
+                            <!-- <video controls class="gallery-video"><source src="yourvideo1.mp4" type="video/mp4"></video> -->
+                            <!-- <video controls class="gallery-video"><source src="yourvideo2.mp4" type="video/mp4"></video> -->
+                            
+                            <div class="media-placeholder video-placeholder">
+                                <div class="placeholder-content">
+                                    <span class="placeholder-icon">🎬</span>
+                                    <span class="placeholder-text">Add your first video!</span>
+                                    <span class="placeholder-subtext">Use: &lt;video controls class="gallery-video"&gt;&lt;source src="filename.mp4"&gt;&lt;/video&gt;</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -498,6 +919,127 @@
         };
         
         var currentSection = 'daily';
+        
+        // Expanded self-care suggestions array
+        var selfCareSuggestions = [
+            "Light a candle and write down one thing you're letting go of.",
+            "Take a 10-minute walk and name 5 things you see in nature.",
+            "Unplug from social media for an hour and just be.",
+            "Play your favorite song and dance like no one's watching.",
+            "Make a cozy drink and journal what comfort means to you.",
+            "Stretch your body and thank it out loud.",
+            "Text someone just to tell them you love them.",
+            "Do absolutely nothing for 5 minutes without guilt.",
+            "Write a love letter to your future self.",
+            "Take a long shower and imagine you're washing away stress.",
+            "Read one page of something just for fun.",
+            "Light incense or diffuse a scent that calms you.",
+            "Sit by a window and daydream without shame.",
+            "Write down three things that made you smile today.",
+            "Put your phone down and stare at the sky for a few minutes.",
+            "Wrap yourself in a blanket and listen to soft music.",
+            "Color something, even if it's messy.",
+            "Hug a pillow and breathe deeply for 60 seconds.",
+            "Tidy up a small area of your space as an act of love.",
+            "Say no to something and feel the power of the boundary."
+        ];
+        
+        function generateSelfCareSuggestions() {
+            var suggestions = [];
+            var usedIndices = [];
+            
+            // Use a loop to select 3 random suggestions
+            for (var i = 0; i < 3; i++) {
+                var randomIndex;
+                // Make sure we don't repeat suggestions
+                do {
+                    randomIndex = Math.floor(Math.random() * selfCareSuggestions.length);
+                } while (usedIndices.indexOf(randomIndex) !== -1);
+                
+                usedIndices.push(randomIndex);
+                suggestions.push(selfCareSuggestions[randomIndex]);
+            }
+            
+            return suggestions;
+        }
+        
+        function displaySelfCareSuggestions() {
+            var suggestions = generateSelfCareSuggestions();
+            var cardsContainer = document.getElementById('self-care-cards');
+            var selfCareSection = document.getElementById('self-care-section');
+            
+            // Clear previous cards
+            cardsContainer.innerHTML = '';
+            
+            // Use a loop to create and display each suggestion card
+            for (var i = 0; i < suggestions.length; i++) {
+                var card = document.createElement('div');
+                card.className = 'self-care-card';
+                card.textContent = suggestions[i];
+                cardsContainer.appendChild(card);
+            }
+            
+            // Show the section with animation
+            setTimeout(function() {
+                selfCareSection.classList.add('show');
+            }, 500);
+        }
+        
+        function generateDailyQuestion(personalData, dayOfYear) {
+            // Question themes that rotate but generate unique content each time
+            var questionThemes = [
+                "authenticity", "duality", "growth", "intuition", "connection", 
+                "creativity", "balance", "empathy", "wisdom", "transformation",
+                "purpose", "beauty", "courage", "exploration", "harmony"
+            ];
+            
+            var questionStarters = [
+                "Today's cosmic inquiry for your soul:",
+                "Deep reflection for today:",
+                "Your daily soul question:",
+                "Today's contemplation:",
+                "Cosmic question of the day:",
+                "Today's inner wisdom prompt:",
+                "Daily reflection for your journey:",
+                "Soul-stirring question for today:",
+                "Your contemplative moment today:",
+                "Today's path to insight:"
+            ];
+            
+            var questionFormats = [
+                "How can I embody more {theme} in my daily life? Your {sun} nature gives you unique access to both intellectual understanding and emotional depth. Your {moon} Moon provides the grounding wisdom to implement meaningful changes, while your {rising} rising ensures your authentic self radiates outward. What would it look like to honor this aspect of yourself more fully today?",
+                
+                "What area of my life is calling for greater {theme} right now? Your position as a {sun} makes you naturally gifted at seeing multiple perspectives and finding creative solutions. Your {moon} Moon reminds you that true wisdom engages all your senses, while your {rising} rising encourages bold, optimistic action. Where do you feel drawn to make positive changes?",
+                
+                "How can my natural gift for {theme} serve others today? Born on the summer solstice threshold, you carry both the light of new possibilities and the wisdom of deep understanding. Your {moon} Moon provides steady compassion, while your {rising} rising ensures your influence reaches far and wide. Who in your world might benefit from this aspect of your nature?",
+                
+                "What would {theme} look like if I expressed it fearlessly today? Your {sun} energy thrives when you can integrate both analytical thinking and intuitive knowing. Your {moon} Moon grounds you in practical wisdom, while your {rising} rising broadcasts confidence and hope. How can you step more fully into this part of yourself?",
+                
+                "Where in my life am I ready to embrace deeper {theme}? Your unique astrological blueprint makes you a natural bridge between different worlds - mind and heart, logic and intuition, stability and adventure. Your {moon} Moon provides the foundation for lasting change, while your {rising} rising adds the enthusiasm to make it happen. What feels ready to evolve?",
+                
+                "How can I use my understanding of {theme} to create positive change today? Your {sun} nature gives you the rare ability to communicate complex ideas with emotional intelligence. Your {moon} Moon ensures your actions are both beautiful and practical, while your {rising} rising attracts the right opportunities and people. What impact do you want to make?",
+                
+                "What would my highest self do to honor {theme} in this moment? Your cusp energy allows you to access both innovative thinking and nurturing wisdom simultaneously. Your {moon} Moon provides the patience and persistence to manifest your vision, while your {rising} rising ensures you approach everything with optimism and grace. How can you align with your best self today?"
+            ];
+            
+            // Use day of year to determine theme and format, but make it feel random
+            var themeIndex = (dayOfYear * 7 + 13) % questionThemes.length;
+            var starterIndex = (dayOfYear * 3 + 5) % questionStarters.length;
+            var formatIndex = (dayOfYear * 11 + 7) % questionFormats.length;
+            
+            var theme = questionThemes[themeIndex];
+            var starter = questionStarters[starterIndex];
+            var format = questionFormats[formatIndex];
+            
+            // Replace placeholders with Jessica's specific placements
+            var question = format
+                .replace(/{theme}/g, theme)
+                .replace(/{sun}/g, personalData.sun)
+                .replace(/{moon}/g, personalData.moon)
+                .replace(/{rising}/g, personalData.rising);
+            
+            return starter + " " + question;
+        }
         
         function generateAIHoroscope(type, personalData) {
             var templates = {
@@ -541,10 +1083,6 @@
                     "Your " + personalData.moon + " Moon gives you natural financial wisdom and an appreciation for quality over quantity, Jessica. Your unique energy helps you balance practical money decisions with intuitive feelings about investments. Your " + personalData.rising + " rising attracts abundance through optimism and generous sharing of your gifts. Focus on building wealth that supports both security and freedom. Trust your nature to find creative income streams that combine multiple talents."
                 ],
                 
-                question: [
-                    "Today's cosmic question for your soul: How can I honor both my need for mental stimulation and emotional depth today? Your " + personalData.sun + " nature thrives when you can satisfy both your curious mind and your nurturing heart. Your " + personalData.moon + " Moon suggests the answer might involve something beautiful or sensual, while your " + personalData.rising + " rising adds: And how can this bring more joy and wisdom into my world? Reflect on activities, conversations, or experiences that feed multiple parts of your complex, beautiful self."
-                ],
-                
                 oracle: [
                     "Your Oracle Card: THE BRIDGE - Perfect for your energy! You are being called to connect different worlds, ideas, or people today. Your gift lies in translation - helping others understand complex emotions, bridging gaps between logic and intuition, or bringing together diverse perspectives. Your " + personalData.moon + " Moon provides the stable foundation, while your " + personalData.rising + " rising offers the vision to see where this bridge leads. Trust your natural ability to help others cross from confusion to clarity, from isolation to connection. You are the bridge the world needs."
                 ],
@@ -570,6 +1108,13 @@
                 ]
             };
             
+            // For Question of the Day, use AI-style generation based on the date
+            if (type === 'question') {
+                var today = new Date();
+                var dayOfYear = Math.floor((today - new Date(today.getFullYear(), 0, 0)) / (1000 * 60 * 60 * 24));
+                return generateDailyQuestion(personalData, dayOfYear);
+            }
+            
             var typeTemplates = templates[type] || templates.daily;
             var randomTemplate = typeTemplates[Math.floor(Math.random() * typeTemplates.length)];
             return randomTemplate;
@@ -578,6 +1123,10 @@
         function generateDailyHoroscope() {
             var button = document.getElementById('refresh-daily');
             var messageEl = document.getElementById('daily-message');
+            var selfCareSection = document.getElementById('self-care-section');
+            
+            // Hide self-care section during loading
+            selfCareSection.classList.remove('show');
             
             button.disabled = true;
             button.textContent = 'Consulting the cosmos...';
@@ -595,6 +1144,9 @@
                         month: 'long',
                         day: 'numeric'
                     });
+                    
+                    // Generate and display self-care suggestions after horoscope loads
+                    displaySelfCareSuggestions();
                     
                 } catch (error) {
                     messageEl.innerHTML = '<div class="error-message">Unable to generate reading right now. The cosmic energies are shifting - please try again in a moment!</div>';
@@ -751,6 +1303,10 @@
                     var luckyReading = generateAIHoroscope('lucky', jessicaProfile);
                     document.getElementById('lucky-message').textContent = luckyReading;
                 }, 1400);
+                
+            } else if (sectionName === 'girly-corner') {
+                // No loading needed for girly corner - it's static content
+                // Could add a welcome message or animation here if desired
             }
         }
         
