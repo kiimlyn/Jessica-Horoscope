@@ -762,6 +762,126 @@
                 display: none;
             }
         }
+        
+        /* Cosmic Calendar Styles */
+        .cosmic-calendar-intro {
+            background: linear-gradient(135deg, #e1bee7, #ce93d8);
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 30px;
+            color: #4a148c;
+            font-size: 1.1em;
+            line-height: 1.6;
+            text-align: center;
+        }
+        
+        .cosmic-calendar-content {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .calendar-event {
+            background: linear-gradient(135deg, #f3e5f5, #e1bee7);
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            border-left: 5px solid;
+            transition: transform 0.3s ease;
+        }
+        
+        .calendar-event:hover {
+            transform: translateY(-3px);
+        }
+        
+        .event-mercury {
+            border-left-color: #ff9800;
+            background: linear-gradient(135deg, #fff3e0, #ffcc80);
+        }
+        
+        .event-venus {
+            border-left-color: #e91e63;
+            background: linear-gradient(135deg, #fce4ec, #f8bbd9);
+        }
+        
+        .event-mars {
+            border-left-color: #f44336;
+            background: linear-gradient(135deg, #ffebee, #ffcdd2);
+        }
+        
+        .event-eclipse {
+            border-left-color: #9c27b0;
+            background: linear-gradient(135deg, #f3e5f5, #e1bee7);
+        }
+        
+        .event-moon {
+            border-left-color: #3f51b5;
+            background: linear-gradient(135deg, #e8eaf6, #c5cae9);
+        }
+        
+        .event-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 10px;
+        }
+        
+        .event-icon {
+            font-size: 2em;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        .event-details {
+            flex: 1;
+        }
+        
+        .event-title {
+            font-size: 1.2em;
+            font-weight: 600;
+            color: #4a148c;
+            margin-bottom: 5px;
+        }
+        
+        .event-date {
+            font-size: 1em;
+            color: #7b1fa2;
+            font-weight: 500;
+            margin-bottom: 5px;
+        }
+        
+        .event-duration {
+            font-size: 0.9em;
+            color: #8e24aa;
+            font-style: italic;
+        }
+        
+        .event-description {
+            color: #4a148c;
+            line-height: 1.6;
+            margin-top: 10px;
+        }
+        
+        .event-impact {
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+            padding: 12px;
+            margin-top: 12px;
+            font-size: 0.95em;
+            font-style: italic;
+            color: #6a1b9a;
+        }
+        
+        @media (max-width: 768px) {
+            .event-header {
+                flex-direction: column;
+                text-align: center;
+                gap: 10px;
+            }
+            
+            .calendar-event {
+                padding: 15px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -817,6 +937,7 @@
                 <button class="menu-item" onclick="showSection('cosmic-weather')">Cosmic Weather Report</button>
                 <button class="menu-item" onclick="showSection('affirmations')">Daily Affirmations</button>
                 <button class="menu-item" onclick="showSection('lucky')">Lucky Numbers & Times</button>
+                <button class="menu-item" onclick="showSection('cosmic-calendar')">🗓️ Cosmic Calendar</button>
             </div>
         </div>
     </div>
@@ -929,6 +1050,16 @@
             <div class="date">Cosmic timing</div>
         </div>
         
+        <div id="cosmic-calendar-section" class="reading-section">
+            <h1 class="title">🗓️ Cosmic Calendar</h1>
+            <div class="cosmic-calendar-intro">
+                <p>Stay ahead of the cosmic currents, Jessica! Here's your guide to upcoming astrological events and what they mean for your Gemini-Cancer cusp energy.</p>
+            </div>
+            <div id="cosmic-calendar-content" class="cosmic-calendar-content">
+                <!-- Calendar events will be generated here -->
+            </div>
+        </div>
+        
         <div id="tarot-draw-section" class="reading-section">
             <h1 class="title">🔮 Daily Tarot Draw</h1>
             <div class="tarot-content">
@@ -993,7 +1124,213 @@
             "Say no to something and feel the power of the boundary."
         ];
         
-        // Enhanced tarot deck with proper visual symbols and fixed structure
+        // Cosmic calendar data for upcoming astrological events
+        var cosmicCalendar = {
+            getUpcomingEvents: function() {
+                var today = new Date();
+                var currentYear = today.getFullYear();
+                var events = [];
+                
+                // Mercury Retrograde periods for 2025
+                var mercuryRetrogrades = [
+                    { start: new Date(2025, 2, 15), end: new Date(2025, 3, 7), sign: "Aries" },
+                    { start: new Date(2025, 6, 18), end: new Date(2025, 7, 11), sign: "Leo" },
+                    { start: new Date(2025, 10, 9), end: new Date(2025, 10, 29), sign: "Sagittarius" }
+                ];
+                
+                // Venus Retrograde periods
+                var venusRetrogrades = [
+                    { start: new Date(2025, 6, 22), end: new Date(2025, 8, 3), sign: "Leo/Virgo" }
+                ];
+                
+                // Mars Retrograde periods
+                var marsRetrogrades = [
+                    { start: new Date(2025, 11, 6), end: new Date(2026, 1, 24), sign: "Leo/Cancer" }
+                ];
+                
+                // Eclipse seasons
+                var eclipses = [
+                    { date: new Date(2025, 2, 29), type: "Lunar Eclipse", sign: "Libra" },
+                    { date: new Date(2025, 3, 13), type: "Solar Eclipse", sign: "Aries" },
+                    { date: new Date(2025, 8, 7), type: "Lunar Eclipse", sign: "Pisces" },
+                    { date: new Date(2025, 8, 21), type: "Solar Eclipse", sign: "Virgo" }
+                ];
+                
+                // Important New and Full Moons
+                var significantMoons = [
+                    { date: new Date(2025, 3, 27), type: "Super Full Moon", sign: "Scorpio" },
+                    { date: new Date(2025, 7, 19), type: "Full Moon", sign: "Aquarius" },
+                    { date: new Date(2025, 9, 17), type: "New Moon", sign: "Libra" }
+                ];
+                
+                // Process Mercury Retrogrades
+                for (var i = 0; i < mercuryRetrogrades.length; i++) {
+                    var retrograde = mercuryRetrogrades[i];
+                    if (retrograde.end >= today) {
+                        events.push({
+                            type: 'mercury',
+                            icon: '☿',
+                            title: 'Mercury Retrograde in ' + retrograde.sign,
+                            startDate: retrograde.start,
+                            endDate: retrograde.end,
+                            description: 'Communication planet Mercury appears to move backward in the sky.',
+                            impact: 'Your Gemini side may feel this strongly! Double-check messages, back up data, and be extra patient with technology. Great time for reflection and reviewing past decisions.'
+                        });
+                    }
+                }
+                
+                // Process Venus Retrogrades
+                for (var i = 0; i < venusRetrogrades.length; i++) {
+                    var retrograde = venusRetrogrades[i];
+                    if (retrograde.end >= today) {
+                        events.push({
+                            type: 'venus',
+                            icon: '♀',
+                            title: 'Venus Retrograde in ' + retrograde.sign,
+                            startDate: retrograde.start,
+                            endDate: retrograde.end,
+                            description: 'The planet of love and money slows down, encouraging reflection.',
+                            impact: 'Perfect time to reassess relationships and values. Your Taurus Moon will especially benefit from this period of financial and romantic reflection.'
+                        });
+                    }
+                }
+                
+                // Process Mars Retrogrades
+                for (var i = 0; i < marsRetrogrades.length; i++) {
+                    var retrograde = marsRetrogrades[i];
+                    if (retrograde.end >= today) {
+                        events.push({
+                            type: 'mars',
+                            icon: '♂',
+                            title: 'Mars Retrograde in ' + retrograde.sign,
+                            startDate: retrograde.start,
+                            endDate: retrograde.end,
+                            description: 'The action planet slows down, calling for patience and strategy.',
+                            impact: 'Your Sagittarius rising may feel restless, but this is perfect timing to refine your goals rather than rushing forward. Focus on inner motivation.'
+                        });
+                    }
+                }
+                
+                // Process Eclipses
+                for (var i = 0; i < eclipses.length; i++) {
+                    var eclipse = eclipses[i];
+                    if (eclipse.date >= today) {
+                        events.push({
+                            type: 'eclipse',
+                            icon: eclipse.type.includes('Solar') ? '🌑' : '🌕',
+                            title: eclipse.type + ' in ' + eclipse.sign,
+                            startDate: eclipse.date,
+                            endDate: eclipse.date,
+                            description: 'Powerful cosmic reset bringing major shifts and revelations.',
+                            impact: 'Your adaptable cusp nature helps you navigate eclipse energy beautifully. Expect important changes and trust your intuition during this transformative time.'
+                        });
+                    }
+                }
+                
+                // Process Significant Moons
+                for (var i = 0; i < significantMoons.length; i++) {
+                    var moon = significantMoons[i];
+                    if (moon.date >= today) {
+                        events.push({
+                            type: 'moon',
+                            icon: moon.type.includes('Full') ? '🌕' : '🌑',
+                            title: moon.type + ' in ' + moon.sign,
+                            startDate: moon.date,
+                            endDate: moon.date,
+                            description: 'Especially powerful lunar energy affecting emotions and intuition.',
+                            impact: 'Your Cancer side will be deeply attuned to this lunar energy. Perfect time for manifestation, release work, or connecting with your emotional wisdom.'
+                        });
+                    }
+                }
+                
+                // Sort events by date
+                events.sort(function(a, b) {
+                    return a.startDate - b.startDate;
+                });
+                
+                return events.slice(0, 8); // Return next 8 events
+            }
+        };
+        
+        function displayCosmicCalendar() {
+            var events = cosmicCalendar.getUpcomingEvents();
+            var container = document.getElementById('cosmic-calendar-content');
+            
+            container.innerHTML = '';
+            
+            if (events.length === 0) {
+                container.innerHTML = '<div style="text-align: center; padding: 20px; color: #7b1fa2; font-style: italic;">All major cosmic events have passed for now. Check back soon for future planetary movements!</div>';
+                return;
+            }
+            
+            for (var i = 0; i < events.length; i++) {
+                var event = events[i];
+                var eventEl = document.createElement('div');
+                eventEl.className = 'calendar-event event-' + event.type;
+                
+                var eventHeader = document.createElement('div');
+                eventHeader.className = 'event-header';
+                
+                var eventIcon = document.createElement('div');
+                eventIcon.className = 'event-icon';
+                eventIcon.textContent = event.icon;
+                
+                var eventDetails = document.createElement('div');
+                eventDetails.className = 'event-details';
+                
+                var eventTitle = document.createElement('div');
+                eventTitle.className = 'event-title';
+                eventTitle.textContent = event.title;
+                
+                var eventDate = document.createElement('div');
+                eventDate.className = 'event-date';
+                
+                if (event.startDate.getTime() === event.endDate.getTime()) {
+                    // Single day event
+                    eventDate.textContent = event.startDate.toLocaleDateString('en-US', {
+                        weekday: 'long',
+                        month: 'long',
+                        day: 'numeric',
+                        year: 'numeric'
+                    });
+                } else {
+                    // Date range
+                    eventDate.textContent = event.startDate.toLocaleDateString('en-US', {
+                        month: 'short',
+                        day: 'numeric'
+                    }) + ' - ' + event.endDate.toLocaleDateString('en-US', {
+                        month: 'short',
+                        day: 'numeric',
+                        year: 'numeric'
+                    });
+                    
+                    var duration = Math.ceil((event.endDate - event.startDate) / (1000 * 60 * 60 * 24));
+                    var eventDuration = document.createElement('div');
+                    eventDuration.className = 'event-duration';
+                    eventDuration.textContent = '(' + duration + ' days)';
+                    eventDetails.appendChild(eventDuration);
+                }
+                
+                var eventDescription = document.createElement('div');
+                eventDescription.className = 'event-description';
+                eventDescription.textContent = event.description;
+                
+                var eventImpact = document.createElement('div');
+                eventImpact.className = 'event-impact';
+                eventImpact.textContent = '✨ For Jessica: ' + event.impact;
+                
+                eventDetails.appendChild(eventTitle);
+                eventDetails.appendChild(eventDate);
+                eventHeader.appendChild(eventIcon);
+                eventHeader.appendChild(eventDetails);
+                
+                eventEl.appendChild(eventHeader);
+                eventEl.appendChild(eventDescription);
+                eventEl.appendChild(eventImpact);
+                
+                container.appendChild(eventEl);
+            }
+        }
         var tarotDeck = [
             { name: "The Fool", number: "0", symbol: "∞", meaning: "New beginnings and fresh starts await you, Jessica. Your Gemini-Cancer cusp energy is perfect for embracing both adventure and intuitive wisdom as you step into something new." },
             { name: "The Magician", number: "I", symbol: "⚡", meaning: "You have all the tools you need right now. Your dual nature gives you access to both logical planning and emotional intelligence - use both to manifest your desires." },
@@ -1003,7 +1340,7 @@
             { name: "The Hierophant", number: "V", symbol: "⚕", meaning: "Learning and teaching are featured. Your Gemini love of knowledge combines beautifully with your desire to share wisdom with others." },
             { name: "The Lovers", number: "VI", symbol: "♥", meaning: "Relationships and choices are highlighted. Your cusp nature helps you understand both sides of any situation. Trust your heart in matters of connection." },
             { name: "The Chariot", number: "VII", symbol: "⚔", meaning: "Forward movement with purpose. Your Sagittarius rising gives you the confidence to pursue your goals while your inner wisdom guides the way." },
-            { name: "Strength", number: "VIII", symbol: "∞", meaning: "Gentle power and inner courage. Your ability to be both strong and tender is your greatest asset. Lead with love, not force." },
+            { name: "Strength", number: "VIII", symbol: "💪", meaning: "Gentle power and inner courage. Your ability to be both strong and tender is your greatest asset. Lead with love, not force." },
             { name: "The Hermit", number: "IX", symbol: "🕯", meaning: "Inner reflection and soul searching. Take time for solitude to connect with your deeper wisdom. Your answers come from within." },
             { name: "Wheel of Fortune", number: "X", symbol: "☸", meaning: "Change and cycles. Your adaptable nature helps you flow with life's ups and downs. Trust that everything happens for a reason." },
             { name: "Justice", number: "XI", symbol: "⚖", meaning: "Balance and fairness. Your dual nature understands multiple perspectives. Seek harmony between your logical mind and emotional heart." },
@@ -1059,13 +1396,31 @@
                     return function() {
                         var cardEl = document.createElement('div');
                         cardEl.className = 'tarot-card';
-                        cardEl.innerHTML = 
-                            '<div class="card-number">' + cardData.card.number + '</div>' +
-                            '<div class="card-visual">' +
-                                '<div class="card-symbol">' + cardData.card.symbol + '</div>' +
-                            '</div>' +
-                            '<div class="card-name">' + cardData.card.name + '</div>' +
-                            '<div class="card-position">' + cardData.position + '</div>';
+                        
+                        var cardNumber = document.createElement('div');
+                        cardNumber.className = 'card-number';
+                        cardNumber.textContent = cardData.card.number;
+                        
+                        var cardVisual = document.createElement('div');
+                        cardVisual.className = 'card-visual';
+                        
+                        var cardSymbol = document.createElement('div');
+                        cardSymbol.className = 'card-symbol';
+                        cardSymbol.textContent = cardData.card.symbol;
+                        
+                        var cardName = document.createElement('div');
+                        cardName.className = 'card-name';
+                        cardName.textContent = cardData.card.name;
+                        
+                        var cardPosition = document.createElement('div');
+                        cardPosition.className = 'card-position';
+                        cardPosition.textContent = cardData.position;
+                        
+                        cardVisual.appendChild(cardSymbol);
+                        cardEl.appendChild(cardNumber);
+                        cardEl.appendChild(cardVisual);
+                        cardEl.appendChild(cardName);
+                        cardEl.appendChild(cardPosition);
                         
                         cardsContainer.appendChild(cardEl);
                         
@@ -1083,15 +1438,34 @@
                 for (var i = 0; i < drawnCards.length; i++) {
                     var meaningEl = document.createElement('div');
                     meaningEl.className = 'meaning-card';
-                    meaningEl.innerHTML = 
-                        '<div class="meaning-header">' +
-                            '<span class="meaning-symbol">' + drawnCards[i].card.symbol + '</span>' +
-                            '<div>' +
-                                '<div class="meaning-title">' + drawnCards[i].card.name + '</div>' +
-                                '<div class="meaning-position">' + drawnCards[i].position + '</div>' +
-                            '</div>' +
-                        '</div>' +
-                        '<div class="meaning-text">' + drawnCards[i].card.meaning + '</div>';
+                    
+                    var meaningHeader = document.createElement('div');
+                    meaningHeader.className = 'meaning-header';
+                    
+                    var meaningSymbol = document.createElement('span');
+                    meaningSymbol.className = 'meaning-symbol';
+                    meaningSymbol.textContent = drawnCards[i].card.symbol;
+                    
+                    var meaningTitleDiv = document.createElement('div');
+                    
+                    var meaningTitle = document.createElement('div');
+                    meaningTitle.className = 'meaning-title';
+                    meaningTitle.textContent = drawnCards[i].card.name;
+                    
+                    var meaningPosition = document.createElement('div');
+                    meaningPosition.className = 'meaning-position';
+                    meaningPosition.textContent = drawnCards[i].position;
+                    
+                    var meaningText = document.createElement('div');
+                    meaningText.className = 'meaning-text';
+                    meaningText.textContent = drawnCards[i].card.meaning;
+                    
+                    meaningTitleDiv.appendChild(meaningTitle);
+                    meaningTitleDiv.appendChild(meaningPosition);
+                    meaningHeader.appendChild(meaningSymbol);
+                    meaningHeader.appendChild(meaningTitleDiv);
+                    meaningEl.appendChild(meaningHeader);
+                    meaningEl.appendChild(meaningText);
                     
                     meaningsContainer.appendChild(meaningEl);
                 }
@@ -1291,27 +1665,22 @@
             messageEl.textContent = 'The universe is preparing your personalized reading...';
             
             setTimeout(function() {
-                try {
-                    var horoscope = generateAIHoroscope('daily', jessicaProfile);
-                    messageEl.textContent = horoscope;
-                    
-                    var today = new Date();
-                    document.getElementById('current-date').textContent = today.toLocaleDateString('en-US', {
-                        weekday: 'long',
-                        year: 'numeric',
-                        month: 'long',
-                        day: 'numeric'
-                    });
-                    
-                    // Generate and display self-care suggestions after horoscope loads
-                    displaySelfCareSuggestions();
-                    
-                } catch (error) {
-                    messageEl.innerHTML = '<div class="error-message">Unable to generate reading right now. The cosmic energies are shifting - please try again in a moment!</div>';
-                } finally {
-                    button.disabled = false;
-                    button.textContent = 'Generate Fresh Reading';
-                }
+                var horoscope = generateAIHoroscope('daily', jessicaProfile);
+                messageEl.textContent = horoscope;
+                
+                var today = new Date();
+                document.getElementById('current-date').textContent = today.toLocaleDateString('en-US', {
+                    weekday: 'long',
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                });
+                
+                // Generate and display self-care suggestions after horoscope loads
+                displaySelfCareSuggestions();
+                
+                button.disabled = false;
+                button.textContent = '✨ Generate Fresh Reading';
             }, 2000);
         }
         
@@ -1462,9 +1831,8 @@
                     document.getElementById('lucky-message').textContent = luckyReading;
                 }, 1400);
                 
-            } else if (sectionName === 'tarot-draw') {
-                // No loading needed for tarot section - it has its own draw mechanism
-                // Could add a welcome animation here if desired
+            } else if (sectionName === 'cosmic-calendar') {
+                displayCosmicCalendar();
             }
         }
         
